@@ -46,7 +46,7 @@ class Hangman {
             obj[char] = !/[A-Z0-9]/.test(char);
             return obj;
         }, {});
-        
+
         /* create an object of letters representing A-Z
             - use an object so we can know if the user guessed each letter or not
             - 65 is char code for 'A', array is 0 based, 65-90 are char codes for A-Z */
@@ -58,6 +58,22 @@ class Hangman {
             }
             return obj;
         }, {});
+
+        // sort the numbers after the letters
+        this.abcChars = Object.keys(this.letters).sort((a,b) => {
+            const typeA = isNaN(a) ? 'number' : 'string';
+            const typeB = isNaN(b) ? 'number' : 'string';
+            if (typeA === 'number' && typeB === 'string') {
+                return -1;
+            }
+            if (typeA === 'string' && typeB === 'number') {
+                return 1;
+            }
+            if (typeA === typeB) {
+                return a - b;
+            }
+            return -1;
+        });
 
         setTimeout(() => this.startTimers(), 2000);
         this.render();
@@ -105,10 +121,10 @@ class Hangman {
         if (this.isGameOver) {
             return false;
         }
+        char = char.toUpperCase();
         if (this.letters[char]) {
             return true;
         }
-        char = char.toUpperCase();
         let isCorrect = false;
         if (char in this.lettersFound) {
             isCorrect = true;
@@ -179,28 +195,11 @@ class Hangman {
     }
 
     renderABC() {
+        const numLetters = this.abcChars.length;
         const root = this.node.querySelector('.abc');
         root.innerHTML = '';
-
-        // sort the numbers after the letters
-        const keys = Object.keys(this.letters).sort((a,b) => {
-            const typeA = isNaN(a) ? 'number' : 'string';
-            const typeB = isNaN(b) ? 'number' : 'string';
-            if (typeA === 'number' && typeB === 'string') {
-                return -1;
-            }
-            if (typeA === 'string' && typeB === 'number') {
-                return 1;
-            }
-            if (typeA === typeB) {
-                return a - b;
-            }
-            return -1;
-        });
-
-        const numLetters = keys.length;
         for (let i = 0; i < numLetters; i++) {
-            const char = keys[i];
+            const char = this.abcChars[i];
 
             const div = document.createElement('div');
             div.className = 'char';
@@ -217,8 +216,6 @@ class Hangman {
                 } else {
                     div.className += ' incorrect';
                 }
-            } else if (this.isWinner && char in this.lettersFound) {
-                div.className += ' correct';
             } else if (!this.isGameOver) {
                 div.addEventListener('click', evt => this.guessLetter(char));
             }
@@ -228,4 +225,4 @@ class Hangman {
         }
     }
 
-};
+}

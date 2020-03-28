@@ -2,42 +2,52 @@
 
 #hangman {
     position: relative;
-    height: 1000px;
-    width: 1000px;
+    height: 474px;
+    width: 450px;
+    font-family: arial;
+    margin: 2px;
 }
 
 #hangman .gallow.top {
     position: absolute;
-    top: 0;
-    left: 250px;
-    width: 500px;
-    height: 25px;
+    top: 10px;
+    left: 0px;
+    width: 220px;
+    height: 5px;
     background-color: #000;
 }
 
 #hangman .gallow.body {
     position: absolute;
-    top: 25px;
-    left: 250px;
-    width: 25px;
-    height: 775px;
-    background-color: #000;
+    top: 15px;
+    left: 0px;
+    width: 385px;
+    height: 356px;
+    border-left: 5px solid #000;
+}
+
+#hangman .gallow.body .timer {
+    position: absolute;
+    top: 5px;
+    left: 22px;
+    font-size: 52px;
+    z-index: 3;
+    color: lightgrey;
 }
 
 #hangman .gallow.body .letters {
     position: absolute;
-    left: 150px;
-    bottom: 50px;
-    height: 100px;
-    width: 850px;
+    left: 23px;
+    bottom: 22px;
+    width: 385px;
     white-space: nowrap;
     overflow: visible;
 }
 #hangman .gallow.body .letters .char {
     display: inline-block;
-    margin-right: 10px;
-    width: 32px;
-    font-size: 30px;
+    margin-right: 5px;
+    width: 10px;
+    font-size: 14px;
     text-align: center;
 }
 
@@ -45,42 +55,45 @@
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 175px;
-    height: 25px;
+    bottom: 98px;
+    height: 5px;
     background-color: #000;
 }
 
 #hangman .hint {
     position: absolute;
-    top: 25px;
-    left: 5px;
-    width: 235px;
+    top: 0px;
+    right: 0px;
+    width: 220px;
     padding: 5px;
     text-align: center;
-    font-size: 15px;
+    font-size: 14px;
     color: #000;
+    background-color: lightgrey;
+    border: 1px solid #000;
 }
 #hangman .hint-text {
     padding-top: 10px;
+    padding-bottom: 10px;
     display: inline-block;
 }
 
 #hangman .abc {
     position: absolute;
-    top: 200px;
-    left: 25px;
-    width: 220px;
+    bottom: 9px;
+    left: 3px;
+    width: 450px;
 }
 #hangman .abc.letters .char,
 #hangman.gameover .abc.letters .char:hover {
-    margin-bottom: 10px;
-    margin-right: 10px;
+    margin-bottom: 5px;
+    margin-right: 5px;
     border: 1px solid #000;
-    padding: 5px;
+    padding: 3px;
     display: inline-block;
     text-align: center;
-    width: 32px;
-    font-size: 30px;
+    width: 17px;
+    font-size: 13px;
     background-color: transparent;
     color: #000;
 }
@@ -112,12 +125,12 @@
 }
 
 #hangman .letters .char {
-    font-size: 25px;
+    font-size: 12px;
     font-weight: bold;
     border-bottom: 1px solid #000;
-    width: 25px;
-    padding-right: 10px;
-    padding-bottom: 3px;
+    width: 12px;
+    padding-right: 5px;
+    padding-bottom: 2px;
     color: #000;
 }
 #hangman .letters .char:last-child {
@@ -138,10 +151,10 @@
     display: block;
     position: absolute;
     z-index: 3;
-    top: 170px;
-    left: 42px;
-    width: 454px;
-    height: 340px;
+    top: 86px;
+    left: 35px;
+    width: 190px;
+    height: 143px;
     background-image: url('./img/game-over.png');
     background-size: contain;
     background-position: center center;
@@ -150,8 +163,8 @@
 }
 #hangman.gameover.winner .hanging .gameover-image {
     background-image: url('./img/winner.png');
-    top: 147px;
-    left: 23px;
+    top: 79px;
+    left: 33px;
 }
 
 #hangman .tries-1 .hanging .noose,
@@ -165,23 +178,23 @@
     position: absolute;
     z-index: 0;
     top: 0px;
-    left: 190px;
+    left: 85px;
     background-image: url('./img/noose.jpg');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: top center;
-    width: 150px;
-    height: 150px;
+    width: 75px;
+    height: 75px;
 }
 
 #hangman .hanging .skeleton {
     display: none;
     position: absolute;
     z-index: 1;
-    left: 172px;
-    top: 80px;
-    width: 175px;
-    height: 500px;
+    left: 77px;
+    top: 39px;
+    width: 87px;
+    height: 250px;
     background-image: url('./img/skeleton.png');
     background-position: top center;
     background-size: contain;
@@ -194,19 +207,23 @@
 }
 #hangman .tries-2 .hanging .skeleton {
     display: block;
-    clip-path: inset(0px 0px 430px 0px);
+    /*clip: rect(0px, 0px, 430px, 0px);*/
+    clip-path: inset(0px 0px 215px 0px);
 }
 #hangman .tries-3 .hanging .skeleton {
     display: block;
-    clip-path: inset(0px 45px 198px 50px);
+    /*clip: rect(0px, 45px, 198px, 50px);*/
+    clip-path: inset(0px 23px 99px 25px);
 }
 #hangman .tries-4 .hanging .skeleton {
     display: block;
-    clip-path: inset(0px 45px 198px 0);
+    /*clip: rect(0px, 45px, 198px, 0);*/
+    clip-path: inset(0px 23px 99px 0);
 }
 #hangman .tries-5 .hanging .skeleton {
     display: block;
-    clip-path: inset(0px 0 198px 0);
+    /*clip: rect(0px, 0px, 198px, 0);*/
+    clip-path: inset(0px 0 99px 0);
 }
 #hangman .tries-6 .hanging .skeleton {
     display: block;
@@ -215,8 +232,8 @@
     display: block;
     bottom: 0;
     right: 0;
-    width: 75px;
-    height: 198px;
+    width: 37px;
+    height: 99px;
 }
 #hangman .tries-7 .hanging .skeleton {
     display: block;

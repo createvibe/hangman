@@ -9,7 +9,7 @@ class Hangman {
         return new Hangman(node, word, hint);
     }
 
-    constructor(node, word, hint, maxIncorrectGuesses = 7) {
+    constructor(node, word, hint, timeout = 60000, maxIncorrectGuesses = 7) {
         // the root document element
         this.node = node;
         // the word to solve
@@ -18,27 +18,82 @@ class Hangman {
         this.hint = hint;
         // the max number of incorrect guesses allowed
         this.maxIncorrectGuesses = maxIncorrectGuesses;
+        // the game timeout, in milliseconds
+        this.timeout = timeout;
+        // render the hangman
+        this.startGame();
+    }
+
+    startGame() {
+        // clear any previous state
+        this.node.className = '';
+        this.node.querySelector('.gallow.body').className = 'gallow body';
+        this.node.querySelector('.gallow.body .timer').innerHTML = '';
+
         // keep track of how many incorrect guess attempts the user has made
         this.incorrectGuesses = 0;
+        
         // know if the game is over
         this.isGameOver = false;
+
+        // know how much time is left
+        this.timeLeft = this.timeout;
+        
         /* create an object of letters representing each character in the given word
             - use an object so we can know if the user guessed each letter or not */
         this.lettersFound = (new Array(this.word.length)).fill(null).reduce((obj, v, n) => {
             const char = this.word.charAt(n);
-            obj[char] = !/[A-Z]/.test(char);
+            obj[char] = !/[A-Z0-9]/.test(char);
             return obj;
         }, {});
+        
         /* create an object of letters representing A-Z
             - use an object so we can know if the user guessed each letter or not
             - 65 is char code for 'A', array is 0 based, 65-90 are char codes for A-Z */
-        this.letters = (new Array(26)).fill(0).reduce((obj, v, n) => {
-            obj[String.fromCharCode(n + 65)] = false;
+        this.letters = (new Array(36)).fill(0).reduce((obj, v, n) => {
+            if (n < 26) {
+                obj[String.fromCharCode(n + 65)] = false;
+            } else {
+                obj[n - 26] = false;
+            }
             return obj;
         }, {});
-        // render the hangman
-        this.clearGameBoard();
+
+        setTimeout(() => this.startTimers(), 2000);
         this.render();
+    }
+
+    startTimers() {
+        if (this.timeoutInterval) {
+            clearTimeout(this.timeoutInterval);
+        }
+        if (this.timerInterval) {
+            clearTimeout(this.timerInterval);
+        }
+        this.timeoutInterval = setInterval(() => {
+            if (this.isGameOver) {
+                clearInterval(this.timeoutInterval);
+                this.timeoutInterval = null;
+                return;
+            }
+            this.incorrectGuesses += 1;
+            this.isGameOver = (this.incorrectGuesses >= this.maxIncorrectGuesses);
+            this.render();
+        }, this.timeLeft / this.maxIncorrectGuesses);  // TODO: - correctGuesses
+        this.timerInterval = setInterval(() => {
+            if (this.isGameOver) {
+                clearInterval(this.timerInterval);
+                this.timerInterval = null;
+                return;
+            }
+            this.timeLeft -= 1000;
+            this.node.querySelector('.gallow.body .timer').innerHTML = (this.timeLeft / 1000);
+            if (this.timeLeft <= 0) {
+                this.isGameOver = true;
+                this.render();
+            }
+        }, 1000);
+        this.node.querySelector('.gallow.body .timer').innerHTML = (this.timeLeft / 1000);
     }
 
     gameOver() {
@@ -59,6 +114,8 @@ class Hangman {
             isCorrect = true;
             this.lettersFound[char] = true;
             this.isWinner = this.isGameOver = Object.keys(this.lettersFound).every(char => !!this.lettersFound[char]);
+            this.timeLeft = Math.min(this.timeout, this.timeLeft + 3000);
+            this.startTimers();
         } else {
             this.incorrectGuesses += 1;
             this.isGameOver = (this.incorrectGuesses >= this.maxIncorrectGuesses);
@@ -66,11 +123,6 @@ class Hangman {
         this.letters[char] = true;
         this.render();
         return isCorrect;
-    }
-
-    clearGameBoard() {
-        this.node.className = '';
-        this.node.querySelector('.gallow.body').className = 'gallow body';
     }
 
     render() {
@@ -106,8 +158,8 @@ class Hangman {
             const div = document.createElement('div');
             div.className = 'char';
 
-            const isNonAlpha = !/[A-Z]/.test(char);
-            if (isNonAlpha) {
+            const isAlphaNumeric = /[A-Z0-9]/.test(char);
+            if (!isAlphaNumeric) {
                 div.className += ' non-alpha';
             }
 
@@ -115,7 +167,7 @@ class Hangman {
 
             if (char === ' ') {
                 span.innerHTML = '&nbsp;';
-            } else if (this.letters[char] || isNonAlpha) {
+            } else if (this.letters[char] || !isAlphaNumeric) {
                 span.innerText = char;
             } else {
                 span.innerHTML = '&nbsp;';
@@ -130,7 +182,22 @@ class Hangman {
         const root = this.node.querySelector('.abc');
         root.innerHTML = '';
 
-        const keys = Object.keys(this.letters);
+        // sort the numbers after the letters
+        const keys = Object.keys(this.letters).sort((a,b) => {
+            const typeA = isNaN(a) ? 'number' : 'string';
+            const typeB = isNaN(b) ? 'number' : 'string';
+            if (typeA === 'number' && typeB === 'string') {
+                return -1;
+            }
+            if (typeA === 'string' && typeB === 'number') {
+                return 1;
+            }
+            if (typeA === typeB) {
+                return a - b;
+            }
+            return -1;
+        });
+
         const numLetters = keys.length;
         for (let i = 0; i < numLetters; i++) {
             const char = keys[i];

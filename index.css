@@ -1,0 +1,223 @@
+* { margin:0; padding:0; }
+
+#hangman {
+    position: relative;
+    height: 1000px;
+    width: 1000px;
+}
+
+#hangman .gallow.top {
+    position: absolute;
+    top: 0;
+    left: 250px;
+    width: 500px;
+    height: 25px;
+    background-color: #000;
+}
+
+#hangman .gallow.body {
+    position: absolute;
+    top: 25px;
+    left: 250px;
+    width: 25px;
+    height: 775px;
+    background-color: #000;
+}
+
+#hangman .gallow.body .letters {
+    position: absolute;
+    left: 150px;
+    bottom: 50px;
+    height: 100px;
+    width: 850px;
+    white-space: nowrap;
+    overflow: visible;
+}
+#hangman .gallow.body .letters .char {
+    display: inline-block;
+    margin-right: 10px;
+    width: 32px;
+    font-size: 30px;
+    text-align: center;
+}
+
+#hangman .gallow.bottom { 
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 175px;
+    height: 25px;
+    background-color: #000;
+}
+
+#hangman .hint {
+    position: absolute;
+    top: 25px;
+    left: 5px;
+    width: 235px;
+    padding: 5px;
+    text-align: center;
+    font-size: 15px;
+    color: #000;
+}
+#hangman .hint-text {
+    padding-top: 10px;
+    display: inline-block;
+}
+
+#hangman .abc {
+    position: absolute;
+    top: 200px;
+    left: 25px;
+    width: 220px;
+}
+#hangman .abc.letters .char,
+#hangman.gameover .abc.letters .char:hover {
+    margin-bottom: 10px;
+    margin-right: 10px;
+    border: 1px solid #000;
+    padding: 5px;
+    display: inline-block;
+    text-align: center;
+    width: 32px;
+    font-size: 30px;
+    background-color: transparent;
+    color: #000;
+}
+#hangman.gameover .abc.letters .char:hover {
+    cursor: default;
+}
+#hangman .abc.letters .char span {
+    display: block;
+    text-align: center;
+}
+#hangman .abc.letters .char:hover {
+    border-color: green;
+    background-color: green;
+    color: #fff;
+    cursor: pointer;
+}
+#hangman .abc.letters .char.used,
+#hangman .abc.letters .char.used:hover {
+    cursor: default;
+    border-color: #000;
+    background-color: transparent;
+    color: #000;
+}
+#hangman .abc.letters .char.correct,
+#hangman .abc.letters .char.correct:hover {
+    border-color: green;
+    background-color: green;
+    color: #fff;
+}
+
+#hangman .letters .char {
+    font-size: 25px;
+    font-weight: bold;
+    border-bottom: 1px solid #000;
+    width: 25px;
+    padding-right: 10px;
+    padding-bottom: 3px;
+    color: #000;
+}
+#hangman .letters .char:last-child {
+    margin-right: 0;
+}
+#hangman .letters .char.correct {
+    color: green;
+}
+#hangman .letters .char.incorrect {
+    text-decoration: line-through;
+    opacity: .25;
+}
+#hangman .letters .char.non-alpha {
+    border: 0;
+}
+
+#hangman.gameover .hanging .gameover-image {
+    display: block;
+    position: absolute;
+    z-index: 3;
+    top: 170px;
+    left: 42px;
+    width: 454px;
+    height: 340px;
+    background-image: url('./img/game-over.png');
+    background-size: contain;
+    background-position: center center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+#hangman.gameover.winner .hanging .gameover-image {
+    background-image: url('./img/winner.png');
+    top: 147px;
+    left: 23px;
+}
+
+#hangman .tries-1 .hanging .noose,
+#hangman .tries-2 .hanging .noose,
+#hangman .tries-3 .hanging .noose,
+#hangman .tries-4 .hanging .noose,
+#hangman .tries-5 .hanging .noose,
+#hangman .tries-6 .hanging .noose,
+#hangman .tries-7 .hanging .noose {
+    display: block;
+    position: absolute;
+    z-index: 0;
+    top: 0px;
+    left: 190px;
+    background-image: url('./img/noose.jpg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: top center;
+    width: 150px;
+    height: 150px;
+}
+
+#hangman .hanging .skeleton {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    left: 172px;
+    top: 80px;
+    width: 175px;
+    height: 500px;
+    background-image: url('./img/skeleton.png');
+    background-position: top center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+#hangman .hanging .skeleton .cover {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+}
+#hangman .tries-2 .hanging .skeleton {
+    display: block;
+    clip-path: inset(0px 0px 430px 0px);
+}
+#hangman .tries-3 .hanging .skeleton {
+    display: block;
+    clip-path: inset(0px 45px 198px 50px);
+}
+#hangman .tries-4 .hanging .skeleton {
+    display: block;
+    clip-path: inset(0px 45px 198px 0);
+}
+#hangman .tries-5 .hanging .skeleton {
+    display: block;
+    clip-path: inset(0px 0 198px 0);
+}
+#hangman .tries-6 .hanging .skeleton {
+    display: block;
+}
+#hangman .tries-6 .hanging .skeleton .cover {
+    display: block;
+    bottom: 0;
+    right: 0;
+    width: 75px;
+    height: 198px;
+}
+#hangman .tries-7 .hanging .skeleton {
+    display: block;
+}

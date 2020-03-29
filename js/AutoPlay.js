@@ -107,7 +107,7 @@ class AutoPlay {
             if (this.wordIndex % 2 === 0) {
                 this.timeout = Math.max(45000, this.timeout - 5000);
             }
-            setTimeout(() => this.startGame(word, data), 3000);
+            setTimeout(() => this.newGame(), 3000);
         };
         this.hangman.onLoser = () => {
             setTimeout(() => this.startGame(word, data), 3000);

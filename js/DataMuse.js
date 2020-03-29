@@ -17,14 +17,14 @@ class DataMuse {
      */
     setTopic(topics) {
         this.topics = topics;
-        return this.fetchWords();
+        return this.fetch();
     }
 
     /**
      * Fetch words for the given topics
      * @returns {Promise}
      */
-    fetchWords() {
+    fetch() {
         return new Promise((resolve, reject) => {
             if (this.xhr) {
                 this.xhr.abort();

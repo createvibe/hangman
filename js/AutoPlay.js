@@ -1,26 +1,27 @@
 class AutoPlay {
 
-    constructor(node, topics = []) {
+    constructor(node, topic) {
         this.node = node;
         this.hangman = null;
         this.wordIndex = 0;
-        this.datamuse = new DataMuse(topics);
+        //this.datamuse = new DataMuse(topics);
+        this.wordsdb = new WordsDB(topic);
         this.wordsapi = new WordsAPI();
         this.timeout = 90000;
         this.init();
     }
 
     init() {
-        this.datamuse.fetchWords().then(() => {
+        this.wordsdb.fetchWords().then(() => {
         
             this.randomizeWords();
-            this.startGame();
+            this.newGame();
         
         }).catch(console.error);
     }
 
     randomizeWords() {
-        const words = this.datamuse.words;
+        const words = this.wordsdb.words;
         
         let currentIndex = words.length;
         let temporaryValue;
@@ -41,65 +42,68 @@ class AutoPlay {
         return words;
     }
 
-    startGame() {
-        const word = this.datamuse.words[this.wordIndex];
-        this.wordsapi.fetch(word).then(data => {
-            let hints = [];
-            let hint = data.definition;
-            if (data.partOfSpeech) {
-                hint = data.partOfSpeech + ': ' + hint;
-            }
-            if (data.synonyms) {
-                const syn = data.synonyms.reduce((arr, w) => {
-                    if (w.toUpperCase() !== word.toUpperCase()) {
-                        arr.push(w);
-                    }
-                    return arr;
-                }, []);
-                if (syn.length !== 0) {
-                    hints.push('Synonyms: ' + syn.join(', '));
+    newGame() {
+        const word = this.wordsdb.words[Math.max(this.wordIndex.length - 1, this.wordIndex)];
+        return this.wordsapi.fetch(word)
+            .then(data => this.startGame(word, data || {}))
+    }
+
+    startGame(word, data) {
+        if (!word || !data) {
+            return this.preGame();
+        }
+        let hints = [];
+        let hint = data.definition;
+        if (data.partOfSpeech) {
+            hint = data.partOfSpeech + ': ' + hint;
+        }
+        if (data.synonyms) {
+            const syn = data.synonyms.reduce((arr, w) => {
+                if (w.toUpperCase() !== word.toUpperCase()) {
+                    arr.push(w);
                 }
+                return arr;
+            }, []);
+            if (syn.length !== 0) {
+                hints.push('Synonyms: ' + syn.join(', '));
             }
-            if (data.typeOf) {
-                const typeOf = data.typeOf.reduce((arr, w) => {
-                    if (w.toUpperCase() !== word.toUpperCase()) {
-                        arr.push(w);
-                    }
-                    return arr;
-                }, []);
-                if (typeOf.length !== 0) {
-                    hints.push('As in: ' + typeOf.join(', '));
+        }
+        if (data.typeOf) {
+            const typeOf = data.typeOf.reduce((arr, w) => {
+                if (w.toUpperCase() !== word.toUpperCase()) {
+                    arr.push(w);
                 }
+                return arr;
+            }, []);
+            if (typeOf.length !== 0) {
+                hints.push('As in: ' + typeOf.join(', '));
             }
-            if (data.hasTypes && data.hasTypes.length !== 0) {
-                hints.push('Related: ' + data.hasTypes.join(', '));
+        }
+        if (data.hasTypes && data.hasTypes.length !== 0) {
+            hints.push('Related: ' + data.hasTypes.join(', '));
+        }
+        if (data.derivation) {
+            hints = hints.concat('Comes From: ' + data.derivation.join(', '));
+        }
+        if (data.examples && data.examples.length !== 0) {
+            hints = hints.concat(data.examples);
+        }
+        this.hangman = new Hangman(this.node, word, hint, this.timeout);
+        this.hangman.onHintTime = () => {
+            if (hints.length !== 0) {
+                this.hangman.addHint(hints.shift());
             }
-            if (data.derivation) {
-                hints = hints.concat('Comes From: ' + data.derivation.join(', '));
-            }
-            if (data.examples && data.examples.length !== 0) {
-                hints = hints.concat(data.examples);
-            }
-            this.hangman = new Hangman(this.node, word, hint, this.timeout);
-            this.hangman.onHintTime = () => {
-                if (hints.length !== 0) {
-                    this.hangman.addHint(hints.shift());
-                }
-            };
-            this.hangman.onWinner = () => {
-                this.wordIndex += 1;
-                if (this.wordIndex % 2 === 0) {
-                    this.timeout = Math.max(45000, this.timeout - 5000);
-                }
-                setTimeout(() => this.startGame(), 3000);
-            };
-            this.hangman.onLoser = () => {
-                setTimeout(() => this.startGame(), 3000);
-            };
-        }).catch(err => {
+        };
+        this.hangman.onWinner = () => {
             this.wordIndex += 1;
-            this.startGame();
-        });
+            if (this.wordIndex % 2 === 0) {
+                this.timeout = Math.max(45000, this.timeout - 5000);
+            }
+            setTimeout(() => this.startGame(word, data), 3000);
+        };
+        this.hangman.onLoser = () => {
+            setTimeout(() => this.startGame(word, data), 3000);
+        };
     }
 
 }

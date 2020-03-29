@@ -5,13 +5,13 @@
         <link rel="stylesheet" href="./index.css">
         <script type="text/javascript" src="./js/Hangman.js"></script>
         <script type="text/javascript" src="./js/WordsAPI.js"></script>
-        <script type="text/javascript" src="./js/DataMuse.js"></script>
+        <script type="text/javascript" src="./js/WordsDB.js"></script>
         <script type="text/javascript" src="./js/AutoPlay.js"></script>
         <script type="text/javascript">
 
             document.addEventListener('DOMContentLoaded', () => {
                 
-                const play = new AutoPlay(document.getElementById('hangman'), ['virus','pandemic']);
+                const play = new AutoPlay(document.getElementById('hangman'), 'virus-pandemic');
 
             }, false);
 

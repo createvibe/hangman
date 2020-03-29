@@ -1,22 +1,22 @@
-class DataMuse {
+class WordsDB {
 
     /**
      * 
-     * @param {Array} topics List of topics the words you want to fetch should be related to
+     * @param {String} topic The topic (file-name) for the words database
      */
-    constructor(topics = []) {
+    constructor(topic) {
         this.xhr = null;
         this.words = [];
-        this.topics = topics;
+        this.topic = topic;
     }
 
     /**
      * Set a new topic
-     * @param {Array} topics List of topics the words you want to fetch should be related to
+     * @param {String} topic The topic (file-name) for the words database
      * @returns {Promise}
      */
-    setTopic(topics) {
-        this.topics = topics;
+    setTopic(topic) {
+        this.topic = topic;
         return this.fetchWords();
     }
 
@@ -28,10 +28,6 @@ class DataMuse {
         return new Promise((resolve, reject) => {
             if (this.xhr) {
                 this.xhr.abort();
-            }
-            let queryString = '';
-            if (this.topics.length !== 0) {
-                queryString = '?topics=' + this.topics.map(s => encodeURIComponent(s)).join(',');
             }
             this.xhr = new XMLHttpRequest();
             this.xhr.addEventListener('load', () => {
@@ -54,7 +50,7 @@ class DataMuse {
                 reject(e);
                 console.error(e);
             })
-            this.xhr.open('GET', 'https://api.datamuse.com/words' + queryString);
+            this.xhr.open('GET', './words/' + encodeURIComponent(this.topic) + '.json');
             this.xhr.send();
         });
     }

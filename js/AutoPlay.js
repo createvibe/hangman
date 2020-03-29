@@ -43,7 +43,10 @@ class AutoPlay {
 
 
     newGame() {
-        const word = this.datamuse.words[Math.max(this.datamuse.words.length - 1, this.wordIndex)];
+        if (this.wordIndex >= this.datamuse.words.length) {
+            this.wordIndex = 0;
+        }
+        const word = this.datamuse.words[this.wordIndex];
         if (!word) {
             if (this.wordIndex > this.words.length) {
                 this.wordIndex = 0;

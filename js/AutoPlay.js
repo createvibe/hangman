@@ -41,7 +41,6 @@ class AutoPlay {
         return words;
     }
 
-
     newGame() {
         if (this.wordIndex >= this.datamuse.words.length) {
             this.wordIndex = 0;
@@ -65,6 +64,7 @@ class AutoPlay {
 
     startGame(word, data) {
         if (!word || !data) {
+            this.wordIndex += 1;
             return this.newGame();
         }
         let hints = [];

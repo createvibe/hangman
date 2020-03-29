@@ -20,6 +20,11 @@ class WordsAPI {
                     console.error(e);
                     return;
                 }
+                if (!json.results || json.results.length === 0) {
+                    console.log(json);
+                    reject(new Error('Invalid Json Response'));
+                    return;
+                }
                 resolve(json.results[0]);
             });
             xhr.addEventListener('error', err => {

@@ -3,7 +3,7 @@
 #hangman {
     position: relative;
     height: 474px;
-    width: 400px;
+    width: 375px;
     font-family: arial;
     margin: 2px;
 }
@@ -64,10 +64,12 @@
     position: absolute;
     top: 0px;
     right: 0px;
-    width: 220px;
+    width: 193px;
+    max-height: 305px;
+    overflow: auto;
     padding: 5px;
     text-align: center;
-    font-size: 14px;
+    font-size: 12px;
     color: #000;
     background-color: lightgrey;
     border: 1px solid #000;
@@ -81,13 +83,13 @@
 #hangman .abc {
     position: absolute;
     bottom: 9px;
-    left: 9px;
-    width: 400px;
+    left: 0px;
+    width: 380px;
 }
 #hangman .abc.letters .char,
 #hangman.gameover .abc.letters .char:hover {
     margin-bottom: 5px;
-    margin-right: 5px;
+    margin-right: 4px;
     border: 1px solid #000;
     padding: 3px;
     display: inline-block;
@@ -152,7 +154,7 @@
     position: absolute;
     z-index: 3;
     top: 86px;
-    left: 15px;
+    left: 10px;
     width: 190px;
     height: 143px;
     background-image: url('./img/game-over.png');
@@ -164,7 +166,7 @@
 #hangman.gameover.winner .hanging .gameover-image {
     background-image: url('./img/winner.png');
     top: 79px;
-    left: 15px;
+    left: 10px;
 }
 
 #hangman .tries-1 .hanging .noose,
@@ -213,12 +215,12 @@
 #hangman .tries-3 .hanging .skeleton {
     display: block;
     /*clip: rect(0px, 45px, 198px, 50px);*/
-    clip-path: inset(0px 23px 99px 25px);
+    clip-path: inset(0px 22px 99px 25px);
 }
 #hangman .tries-4 .hanging .skeleton {
     display: block;
     /*clip: rect(0px, 45px, 198px, 0);*/
-    clip-path: inset(0px 23px 99px 0);
+    clip-path: inset(0px 22px 99px 0);
 }
 #hangman .tries-5 .hanging .skeleton {
     display: block;

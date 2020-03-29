@@ -20,8 +20,18 @@ class Hangman {
         this.maxIncorrectGuesses = maxIncorrectGuesses;
         // the game timeout, in milliseconds
         this.timeout = timeout;
+        // event listeners
+        this.onGameOver = null;
+        this.onWinner = null;
+        this.onLoser = null;
+        this.onHintTime = null;
         // render the hangman
         this.startGame();
+    }
+
+    addHint(hint) {
+        this.hint += '<br /><br />' + hint;
+        this.renderHint();
     }
 
     startGame() {
@@ -81,10 +91,13 @@ class Hangman {
 
     startTimers() {
         if (this.timeoutInterval) {
-            clearTimeout(this.timeoutInterval);
+            clearInterval(this.timeoutInterval);
         }
         if (this.timerInterval) {
-            clearTimeout(this.timerInterval);
+            clearInterval(this.timerInterval);
+        }
+        if (this.hintTimeInterval) {
+            clearInterval(this.hintTimeInterval);
         }
         this.timeoutInterval = setInterval(() => {
             if (this.isGameOver) {
@@ -109,6 +122,16 @@ class Hangman {
                 this.render();
             }
         }, 1000);
+        this.hintTimeInterval = setInterval(() => {
+            if (this.isGameOver) {
+                clearInterval(this.hintTimeInterval);
+                this.hintTimeInterval = null;
+                return;
+            }
+            if (typeof this.onHintTime === 'function') {
+                this.onHintTime();
+            }
+        }, this.timeout / 8);
         this.node.querySelector('.gallow.body .timer').innerHTML = (this.timeLeft / 1000);
     }
 
@@ -146,6 +169,14 @@ class Hangman {
             this.node.className += ' gameover';
             if (this.isWinner) {
                 this.node.className += ' winner';
+                if (typeof this.onWinner === 'function') {
+                    this.onWinner();
+                }
+            } else if (typeof this.onLoser === 'function') {
+                this.onLoser();
+            }
+            if (typeof this.onGameOver === 'function') {
+                this.onGameOver();
             }
         }
         this.renderHint();
@@ -155,7 +186,10 @@ class Hangman {
     }
 
     renderHint() {
-        this.node.querySelector('.hint-text').innerText = this.hint;
+        this.node.querySelector('.hint-text').innerHTML = this.hint;
+        
+        const hintNode = this.node.querySelector('.hint');
+        hintNode.scrollTop = hintNode.scrollHeight;
     }
 
     renderHangman() {

@@ -3,11 +3,17 @@
     <head>
         <title>Hangman</title>
         <link rel="stylesheet" href="./index.css">
-        <script type="text/javascript" src="./Hangman.js"></script>
+        <script type="text/javascript" src="./js/Hangman.js"></script>
+        <script type="text/javascript" src="./js/WordsAPI.js"></script>
+        <script type="text/javascript" src="./js/DataMuse.js"></script>
+        <script type="text/javascript" src="./js/AutoPlay.js"></script>
         <script type="text/javascript">
 
-            const init = () => Hangman.initWithPrompt(document.getElementById('hangman'));
-            document.addEventListener('DOMContentLoaded', init, false);
+            document.addEventListener('DOMContentLoaded', () => {
+                
+                const play = new AutoPlay(document.getElementById('hangman'), ['virus','pandemic']);
+
+            }, false);
 
         </script>
     </head>
@@ -21,7 +27,7 @@
                     <div class="skeleton">
                         <div class="cover"></div>
                     </div>
-                    <div class="gameover-image" onclick="init();"></div>
+                    <div class="gameover-image"></div>
                 </div>
                 <div class="letters"></div>
             </div>

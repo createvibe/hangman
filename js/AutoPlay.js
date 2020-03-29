@@ -57,6 +57,10 @@ class AutoPlay {
         }
         return this.wordsapi.fetch(word)
             .then(data => this.startGame(word, data || {}))
+            .catch(e => {
+                this.wordIndex += 1;
+                return this.newGame();
+            });
     }
 
     startGame(word, data) {

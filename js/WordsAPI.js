@@ -9,6 +9,10 @@ class WordsAPI {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             xhr.addEventListener('load', () => {
+                if (xhr.status === 404) {
+                    reject(new Error('Cannot find word'));
+                    return;
+                }
                 let json = xhr.responseText;
                 try {
                     json = JSON.parse(json);

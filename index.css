@@ -28,9 +28,9 @@
 
 #hangman .gallow.body .timer {
     position: absolute;
-    top: 5px;
-    left: 17px;
-    font-size: 47px;
+    bottom: 47px;
+    left: 20px;
+    font-size: 29px;
     z-index: 3;
     color: lightgrey;
 }
@@ -180,7 +180,7 @@
     position: absolute;
     z-index: 0;
     top: 0px;
-    left: 67px;
+    left: 43px;
     background-image: url('./img/noose.jpg');
     background-size: contain;
     background-repeat: no-repeat;
@@ -193,7 +193,7 @@
     display: none;
     position: absolute;
     z-index: 1;
-    left: 58px;
+    left: 34px;
     top: 39px;
     width: 87px;
     height: 250px;

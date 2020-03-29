@@ -25,7 +25,11 @@ class WordsAPI {
                     reject(new Error('Invalid Json Response'));
                     return;
                 }
-                resolve(json.results[0]);
+                let resultIndex = 0;
+                if (json.results.length > 1) {
+                    resultIndex = Math.floor(Math.random() * (json.results.length - 1));
+                }
+                resolve(json.results[resultIndex]);
             });
             xhr.addEventListener('error', err => {
                 console.error(err);

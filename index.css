@@ -2,7 +2,7 @@
 
 #hangman {
     position: relative;
-    height: 474px;
+    height: 600px;
     width: 375px;
     font-family: arial;
     margin: 2px;
@@ -55,7 +55,7 @@
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 98px;
+    bottom: 224px;
     height: 5px;
     background-color: #000;
 }
@@ -82,7 +82,7 @@
 
 #hangman .abc {
     position: absolute;
-    bottom: 9px;
+    bottom: 135px;
     left: 0px;
     width: 380px;
 }
@@ -239,4 +239,9 @@
 }
 #hangman .tries-7 .hanging .skeleton {
     display: block;
+}
+
+#hangman .info {
+    position: absolute;
+    bottom: 62px;
 }

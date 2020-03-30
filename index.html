@@ -4,6 +4,7 @@
         <title>Hangman</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="./index.css">
+        <script type="text/javascript" src="./js/GameScore.js"></script>
         <script type="text/javascript" src="./js/Hangman.js"></script>
         <script type="text/javascript" src="./js/WordsAPI.js"></script>
         <script type="text/javascript" src="./js/DataMuse.js"></script>
@@ -37,6 +38,29 @@
             <div class="hint">
                 <h4>Need a Hint?</h4>
                 <span class="hint-text"></span>
+            </div>
+            <div class="info">
+                <div class="category">
+                    <span class="title">Category:</span>
+                    <span class="value"></span>
+                </div>
+                <div class="level">
+                    <span class="title">Level:</span>
+                    <span class="value">1</span>
+                </div>
+                <div class="score">
+                    <span class="title">Score:</span>
+                    <span class="value">0</span>
+                </div>
+                <div class="handicap">
+                    <span class="title">Handicaps:</span>
+                    <span class="value">None</span>
+                    <span class="time"></span>
+                </div>
+            </div>
+            <div class="menu">
+                <div class="skip-word"></div>
+                <div class="custom-game"></div>
             </div>
         </div>
     </body>

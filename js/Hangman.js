@@ -9,7 +9,7 @@ class Hangman {
         return new Hangman(node, word, hint);
     }
 
-    constructor(node, word, hint, timeout = 60000, maxIncorrectGuesses = 7) {
+    constructor(node, word, hint, timeout = 60000, maxIncorrectGuesses = 7, numHandicaps = 0, numHints = 1) {
         // the root document element
         this.node = node;
         // the word to solve
@@ -18,13 +18,23 @@ class Hangman {
         this.hint = hint;
         // the max number of incorrect guesses allowed
         this.maxIncorrectGuesses = maxIncorrectGuesses;
+        // the number of handicaps to apply
+        this.numHandicaps = numHandicaps;
+        // the number of hints left for the current game
+        this.numHints = numHints;
         // the game timeout, in milliseconds
         this.timeout = timeout;
+        // the current game level
+        this.level = 1;
         // event listeners
         this.onGameOver = null;
         this.onWinner = null;
         this.onLoser = null;
         this.onHintTime = null;
+        this.onHandicap = null;
+        this.onHandicapStart = null;
+        // object to keep track of score
+        this.score = new GameScore(this);
         // render the hangman
         this.startGame();
     }
@@ -90,49 +100,72 @@ class Hangman {
     }
 
     startTimers() {
-        if (this.timeoutInterval) {
-            clearInterval(this.timeoutInterval);
-        }
         if (this.timerInterval) {
             clearInterval(this.timerInterval);
+        }
+        if (this.handicapInterval) {
+            clearInterval(this.handicapInterval);
         }
         if (this.hintTimeInterval) {
             clearInterval(this.hintTimeInterval);
         }
-        this.timeoutInterval = setInterval(() => {
-            if (this.isGameOver) {
-                clearInterval(this.timeoutInterval);
-                this.timeoutInterval = null;
-                return;
+        this.timerInterval = setInterval(() => this.applyCountDown(), 1000);
+        this.hintTimeInterval = setInterval(() => this.callHintTimeEvent(), this.timeout / 8);
+        const handicapCount = this.score.getHandicapCount();
+        if (handicapCount > 0) {
+            let time;
+            if (handicapCount === 1) {
+                time = (this.timeLeft / 2) + 5;
+            } else {
+                time = Math.floor(this.timeLeft / handicapCount);
             }
-            this.incorrectGuesses += 1;
-            this.isGameOver = (this.incorrectGuesses >= this.maxIncorrectGuesses);
-            this.render();
-        }, this.timeLeft / this.maxIncorrectGuesses);  // TODO: - correctGuesses
-        this.timerInterval = setInterval(() => {
-            if (this.isGameOver) {
-                clearInterval(this.timerInterval);
-                this.timerInterval = null;
-                return;
+            this.handicapIntervalTime = time;
+            this.handicapInterval = setInterval(() => this.applyHandicap(), time);
+            if (typeof this.onHandicapStart === 'function') {
+                this.onHandicapStart();
             }
-            this.timeLeft -= 1000;
-            this.node.querySelector('.gallow.body .timer').innerHTML = (this.timeLeft / 1000);
-            if (this.timeLeft <= 0) {
-                this.isGameOver = true;
-                this.render();
-            }
-        }, 1000);
-        this.hintTimeInterval = setInterval(() => {
-            if (this.isGameOver) {
-                clearInterval(this.hintTimeInterval);
-                this.hintTimeInterval = null;
-                return;
-            }
-            if (typeof this.onHintTime === 'function') {
-                this.onHintTime();
-            }
-        }, this.timeout / 8);
+        }
         this.node.querySelector('.gallow.body .timer').innerHTML = (this.timeLeft / 1000);
+    }
+
+    applyHandicap() {
+        if (this.isGameOver || this.score.getHandicapCount() <= 0) {
+            clearInterval(this.handicapInterval);
+            this.handicapInterval = null;
+            return;
+        }
+        this.score.useHandicap();
+        this.incorrectGuesses += 1;
+        this.isGameOver = (this.incorrectGuesses >= this.maxIncorrectGuesses);
+        this.render();
+        if (typeof this.onHandicap === 'function') {
+            this.onHandicap();
+        }
+    }
+
+    applyCountDown() {
+        if (this.isGameOver) {
+            clearInterval(this.timerInterval);
+            this.timerInterval = null;
+            return;
+        }
+        this.timeLeft -= 1000;
+        this.node.querySelector('.gallow.body .timer').innerHTML = (this.timeLeft / 1000);
+        if (this.timeLeft <= 0) {
+            this.isGameOver = true;
+            this.render();
+        }
+    }
+
+    callHintTimeEvent() {
+       if (this.isGameOver) {
+            clearInterval(this.hintTimeInterval);
+            this.hintTimeInterval = null;
+            return;
+        }
+        if (typeof this.onHintTime === 'function') {
+            this.onHintTime();
+        }
     }
 
     gameOver() {

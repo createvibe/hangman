@@ -33,13 +33,14 @@ class GameScore {
         // 1.5 points for every level beyond the first
         const levelScore = Math.floor(1.5 * Math.max(this.hangman.level - 1, 0));
 
+        // 1 point for every 3 letters in the word
+        const wordScore = Math.floor(this.hangman.word.length / 3);
+
         // 0.75 points reduced for every incorrect guess
         const incorrectScore = -1 * Math.floor(this.hangman.incorrectGuesses * 0.75);
 
         // 1.75 points reduced fo revery incorrect game
         const gameOverScore = -1 * (this.games - 1) * 1.75;
-
-        console.log('game over score', gameOverScore);
 
         this.score += Math.max(0, 
                     handicapScore 

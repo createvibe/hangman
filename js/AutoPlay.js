@@ -124,7 +124,9 @@ class AutoPlay {
         this.node.querySelector('.info .score .value').innerText = this.score;
         this.node.querySelector('.info .handicap .time').innerText = '';
         this.node.querySelector('.info .handicap .value').innerText = numHandicaps === 0 ? 'None' : numHandicaps;
+        const gameCount = this.hangman ? this.hangman.score.games : 0;
         this.hangman = new Hangman(this.node, word, hint, this.timeout, this.maxIncorrectGuesses, numHandicaps, hints.length);
+        this.hangman.score.games = gameCount + 1;
         this.hangman.level = this.level;
         this.hangman.onGameOver = () => {
             if (this.handicapTimeIntv) {
@@ -179,6 +181,7 @@ class AutoPlay {
             setTimeout(() => this.newGame(), 4000);
         };
         this.hangman.onLoser = () => {
+            this.hangman.score.games += 1;
             setTimeout(() => this.startGame(word, data), 3000);
         };
     }

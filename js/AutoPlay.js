@@ -126,6 +126,11 @@ class AutoPlay {
         this.node.querySelector('.info .handicap .value').innerText = numHandicaps === 0 ? 'None' : numHandicaps;
         this.hangman = new Hangman(this.node, word, hint, this.timeout, this.maxIncorrectGuesses, numHandicaps, hints.length);
         this.hangman.level = this.level;
+        this.hangman.onGameOver = () => {
+            if (this.handicapTimeIntv) {
+                clearInterval(this.handicapTimeIntv);
+            }
+        };
         this.hangman.onHintTime = () => {
             if (hints.length !== 0) {
                 this.hangman.addHint(hints.shift());

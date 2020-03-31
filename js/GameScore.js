@@ -49,7 +49,7 @@ class GameScore {
         const incorrectScore = -1 * Math.floor(this.hangman.incorrectGuesses * 0.75);
 
         // 1.75 points reduced fo revery incorrect game
-        const gameOverScore = -1 * (this.games - 1) * 1.75;
+        const gameOverScore = -1 * Mathl.floor((this.games - 1) * 1.75);
 
         this.score += Math.max(0, 
                     handicapScore 

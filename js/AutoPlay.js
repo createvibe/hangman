@@ -5,7 +5,6 @@ class AutoPlay {
         this.hangman = null;
         this.wordIndex = 0;
         this.topics = topics;
-        this.datamuse = new DataMuse(this.topics);
         this.wordsapi = new WordsAPI();
         this.timeout = 90000;
         this.level = 1;
@@ -28,12 +27,25 @@ class AutoPlay {
     }
 
     init() {
+        this.datamuse = new DataMuse(this.topics);
         this.datamuse.fetch().then(() => {
         
             this.randomizeWords();
             this.newGame();
         
         }).catch(console.error);
+        this.node.querySelector('.info .category').addEventListener('click', evt => {
+            const category = prompt('Enter a new category:', this.topics.join(','));
+            if (!category) {
+                return;
+            }
+            const topics = category.split(',').map(str => str.replace(/^\s*|\s*$/g, ''));
+            if (topics.length === 0) {
+                return;
+            }
+            this.topics = topics;
+            this.init();
+        });
     }
 
     randomizeWords() {

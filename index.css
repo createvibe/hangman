@@ -245,3 +245,8 @@
     position: absolute;
     bottom: 55px;
 }
+#hangman .info .category .value {
+    color: green;
+    text-decoration: underline;
+    cursor: pointer;
+}

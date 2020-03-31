@@ -121,15 +121,7 @@ class Hangman {
     }
 
     startTimers() {
-        if (this.timerInterval) {
-            clearInterval(this.timerInterval);
-        }
-        if (this.handicapInterval) {
-            clearInterval(this.handicapInterval);
-        }
-        if (this.hintTimeInterval) {
-            clearInterval(this.hintTimeInterval);
-        }
+        this.stopTimers();
         this.timerInterval = setInterval(() => this.applyCountDown(), 1000);
         this.hintTimeInterval = setInterval(() => this.callHintTimeEvent(), this.timeout / 8);
         const handicapCount = this.score.getHandicapCount();
@@ -147,6 +139,18 @@ class Hangman {
             }
         }
         this.node.querySelector('.gallow.body .timer').innerHTML = (this.timeLeft / 1000);
+    }
+
+    stopTimers() {
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+        }
+        if (this.handicapInterval) {
+            clearInterval(this.handicapInterval);
+        }
+        if (this.hintTimeInterval) {
+            clearInterval(this.hintTimeInterval);
+        }
     }
 
     applyHandicap() {

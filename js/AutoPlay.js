@@ -27,8 +27,18 @@ class AutoPlay {
     }
 
     init() {
+        if (neubpm) {
+            neubpm.stopwatch.ensureStopped();
+            neubpm.stopwatch.flush();
+            this.bpmEvent = null;
+        }
+        if (this.hangman) {
+            this.hangman.stopTimers();
+        }
         this.datamuse = new DataMuse(this.topics);
         this.datamuse.fetch().then(() => {
+
+            neubpm && neubpm.profiler.tag('category', this.topics.join(', '));
         
             this.randomizeWords();
             this.newGame();

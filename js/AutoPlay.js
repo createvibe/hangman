@@ -11,6 +11,9 @@ class AutoPlay {
         this.score = 0;
         this.maxIncorrectGuesses = maxIncorrectGuesses;
         this.bpmEvent = null;
+        this._init = false;
+        this.isCustomGame = false;
+        this.customHint = null;
         this.init();
     }
 
@@ -42,9 +45,21 @@ class AutoPlay {
         
             this.randomizeWords();
             this.newGame();
+
+            this._init = true;
         
         }).catch(console.error);
+        if (this._init) {
+            return;
+        }
+        this.initDOMEvents();
+    }
+
+    initDOMEvents() {
         this.node.querySelector('.info .category').addEventListener('click', evt => {
+            if (this.isCustomGame) {
+                return;
+            }
             const category = prompt('Enter a new category:', this.topics.join(','));
             if (!category) {
                 return;
@@ -54,6 +69,48 @@ class AutoPlay {
                 return;
             }
             this.topics = topics;
+            this.init();
+        });
+        this.node.querySelector('.menu .skip-word').addEventListener('click', evt => {
+            if (this.isCustomGame) {
+                return;
+            }
+            if (this.hangman) {
+                this.hangman.stopTimers();
+            }
+            this.wordIndex += 1;
+            if (neubpm) {
+                neubpm.stopwatch.ensureStopped();
+                neubpm.stopwatch.flush();
+                neubpm.profiler.addEvent(new Event('skip-word'), 'hangman');
+                this.bpmEvent = null;
+            }
+            this.newGame();
+        });
+        this.node.querySelector('.menu .custom-game').addEventListener('click', evt => {
+            const word = prompt('What word would you like to play against?');
+            const hint = prompt('What is a good, but subtle hint to help someone guess your word?');
+            if (!word || !hint) {
+                return;
+            }
+            this.isCustomGame = true;
+            this.word = word;
+            this.customHint = hint;
+            if (neubpm) {
+                neubpm.stopwatch.ensureStopped();
+                neubpm.stopwatch.flush();
+                neubpm.profiler.addEvent(new Event('custom-game'), 'hangman');
+            }
+            this.newGame();
+        });
+        this.node.querySelector('.menu .auto-play').addEventListener('click', evt => {
+            this.customHint = null;
+            this.isCustomGame = false;
+            if (neubpm) {
+                neubpm.stopwatch.ensureStopped();
+                neubpm.stopwatch.flush();
+                neubpm.profiler.addEvent(new Event('auto-play'), 'hangman');
+            }
             this.init();
         });
     }
@@ -88,7 +145,7 @@ class AutoPlay {
         if (this.wordIndex >= this.datamuse.words.length) {
             this.wordIndex = 0;
         }
-        const word = this.datamuse.words[this.wordIndex];
+        const word = this.isCustomGame ? this.word : this.datamuse.words[this.wordIndex];
         if (!word) {
             if (this.wordIndex > this.words.length) {
                 this.wordIndex = 0;
@@ -100,6 +157,10 @@ class AutoPlay {
         return this.wordsapi.fetch(word)
             .then(data => this.startGame(word, data || {}))
             .catch(e => {
+                if (this.isCustomGame) {
+                    this.startGame(word, {});
+                    return;
+                }
                 this.wordIndex += 1;
                 console.error(e);
                 return this.newGame();
@@ -107,7 +168,14 @@ class AutoPlay {
     }
 
     getHintsFromWordData(word, data) {
+        let firstHint = data.definition || '';
+        if (data.partOfSpeech) {
+            firstHint = data.partOfSpeech + ': ' + firstHint;
+        }
         let hints = [];
+        if (firstHint.length !== 0) {
+            hints.push(firstHint);
+        }
         if (data.synonyms) {
             const syn = data.synonyms.reduce((arr, w) => {
                 if (w.toUpperCase() !== word.toUpperCase()) {
@@ -148,13 +216,16 @@ class AutoPlay {
             return this.newGame();
         }
         const hints = this.getHintsFromWordData(word, data);
-        let hint = data.definition;
-        if (data.partOfSpeech) {
-            hint = data.partOfSpeech + ': ' + hint;
+        if (this.isCustomGame) {
+            hints.unshift(this.customHint);
+        }
+        let hint = hints.shift();
+        if (this.hangman) {
+            this.hangman.stopTimers();
         }
         // 1 handicap for every 3 levels
         const numHandicaps = Math.min(this.maxIncorrectGuesses, Math.floor(this.level / 3));
-        this.node.querySelector('.info .category .value').innerText = this.topics.join(', ');
+        this.node.querySelector('.info .category .value').innerText = this.isCustomGame ? 'Custom Game' : this.topics.join(', ');
         this.node.querySelector('.info .level .value').innerText = this.level;
         this.node.querySelector('.info .score .value').innerText = this.score;
         this.node.querySelector('.info .handicap .time').innerText = '';

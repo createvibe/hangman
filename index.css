@@ -250,3 +250,32 @@
     text-decoration: underline;
     cursor: pointer;
 }
+
+#hangman .menu {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    font-size: 17px;
+}
+#hangman .menu .skip-word {
+    position: absolute;
+    right: 0;
+    cursor: pointer;
+    color: green;
+    text-decoration: underline;
+}
+#hangman .menu .custom-game {
+    position: absolute;
+    left: 0;
+    cursor: pointer;
+    color: green;
+    text-decoration: underline;
+}
+#hangman .menu .auto-play {
+    position: absolute;
+    left: 153px;
+    cursor: pointer;
+    color: green;
+    text-decoration: underline;
+}

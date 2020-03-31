@@ -27,6 +27,7 @@ class Hangman {
         // the current game level
         this.level = 1;
         // event listeners
+        this.onGameStart = null;
         this.onGameOver = null;
         this.onWinner = null;
         this.onLoser = null;
@@ -35,8 +36,24 @@ class Hangman {
         this.onHandicapStart = null;
         // object to keep track of score
         this.score = new GameScore(this);
-        // render the hangman
-        this.startGame();
+    }
+
+    toJson() {
+        return {
+            word: this.word,
+            hint: this.hint,
+            maxIncorrectGuesses: this.maxIncorrectGuesses,
+            numHandicaps: this.numHandicaps,
+            numHints: this.numHints,
+            timeout: this.timeout,
+            level: this.level,
+            score: this.score.toJson(),
+            incorrectGuesses: this.incorrectGuesses,
+            isGameOver: this.isGameOver,
+            timeLeft: this.timeLeft,
+            lettersFound: this.lettersFound,
+            letters: this.letters,
+        };
     }
 
     addHint(hint) {
@@ -97,6 +114,10 @@ class Hangman {
 
         setTimeout(() => this.startTimers(), 2000);
         this.render();
+
+        if (typeof this.onGameStart === 'function') {
+            this.onGameStart();
+        }
     }
 
     startTimers() {

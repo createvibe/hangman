@@ -8,6 +8,15 @@ class GameScore {
         this.games = 1;
     }
 
+    toJson() {
+        return {
+            numHandicaps: this.numHandicaps,
+            usedHandicaps: this.usedHandicaps,
+            score: this.score,
+            games: this.games
+        };
+    }
+
     getHandicapCount() {
         return this.numHandicaps - this.usedHandicaps;
     }

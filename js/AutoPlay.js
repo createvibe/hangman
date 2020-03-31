@@ -11,7 +11,20 @@ class AutoPlay {
         this.level = 1;
         this.score = 0;
         this.maxIncorrectGuesses = maxIncorrectGuesses;
+        this.bpmEvent = null;
         this.init();
+    }
+
+    toJson() {
+        return {
+            hangman: this.hangman.toJson(),
+            wordIndex: this.wordIndex,
+            topics: this.topics,
+            timeout: this.timeout,
+            level: this.level,
+            score: this.score,
+            maxIncorrectGuesses: this.maxIncorrectGuesses
+        };
     }
 
     init() {
@@ -128,9 +141,22 @@ class AutoPlay {
         this.hangman = new Hangman(this.node, word, hint, this.timeout, this.maxIncorrectGuesses, numHandicaps, hints.length);
         this.hangman.score.games = gameCount + 1;
         this.hangman.level = this.level;
+        this.hangman.onGameStart = () => {
+            if (neubpm) {
+                if (this.bpmEvent) {
+                    this.bpmEvent.lap();
+                } else {
+                    this.bpmEvent = neubpm.stopwatch.start('game', 'hangman');
+                }
+                neubpm.profiler.addEvent(new Event('start'), 'hangman', this.toJson());
+            }
+        };
         this.hangman.onGameOver = () => {
             if (this.handicapTimeIntv) {
                 clearInterval(this.handicapTimeIntv);
+            }
+            if (neubpm) {
+                neubpm.profiler.addEvent(new Event('stop'), 'hangman', this.toJson());
             }
         };
         this.hangman.onHintTime = () => {
@@ -167,6 +193,7 @@ class AutoPlay {
                 clearInterval(this.handicapTimeIntv);
                 this.hangman.onHandicapStart();
             }
+            neubpm && neubpm.profiler.addEvent(new Event('handicap'), 'hangman', this.toJson());
         };
         this.hangman.onWinner = () => {
             this.level += 1;
@@ -179,11 +206,23 @@ class AutoPlay {
                 this.timeout = Math.max(20000, this.timeout - 5000);
             }
             setTimeout(() => this.newGame(), 4000);
+            if (neubpm) {
+                if (this.level % 5 === 0) {
+                    neubpm.profiler.tag('level', this.level);
+                }
+                neubpm.profiler.addEvent(new Event('winner'), 'hangman', this.toJson());
+                neubpm.stopwatch.ensureStopped();
+                neubpm.stopwatch.flush();
+                this.bpmEvent = null;
+            }
         };
         this.hangman.onLoser = () => {
             this.hangman.score.games += 1;
             setTimeout(() => this.startGame(word, data), 3000);
+            neubpm && neubpm.profiler.addEvent(new Event('loser'), 'hangman', this.toJson());
         };
+        // start the game
+        this.hangman.startGame();
     }
 
 }
